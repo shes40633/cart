@@ -45,10 +45,10 @@
                     <div class="form-group row">
                         <label for="type_id" class="col-sm-2 col-form-label">type_id</label>
                         <div class="col-sm-10">
-                            <select name="type_id"class="form-control" id="type_id" >
+                            <select name="type_id" class="form-control" id="type_id">
                                 @foreach ($products_type as $product_type)
-                            <option value="{{$product_type->id}}" required>{{$product_type->type_name}}</option>
-                            @endforeach
+                                <option value="{{$product_type->id}}" required>{{$product_type->type_name}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -60,11 +60,11 @@
                     </div>
 
                     <div class="form-group row">
-                            <label for="imgs" class="col-sm-2 col-form-label">imgs</label>
-                            <div class="col-sm-10">
-                                    <input type="file" class="form-control"id="imgs" name="imgs[]" multiple>
-                            </div>
+                        <label for="imgs" class="col-sm-2 col-form-label">imgs</label>
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" id="imgs" name="imgs[]" multiple>
                         </div>
+                    </div>
 
                     <div class="form-group row">
                         <div class="col-sm-10">
@@ -90,18 +90,18 @@
             lang: 'zh-TW',
             callbacks: {
                 onImageUpload: function(files) {
-                    for(let i=0; i < files.length; i++) {
+                    for (let i = 0; i < files.length; i++) {
                         $.upload(files[i]);
                     }
                 },
-                onMediaDelete : function(target) {
+                onMediaDelete: function(target) {
                     $.delete(target[0].getAttribute("src"));
                 }
             },
         });
 
 
-        $.upload = function (file) {
+        $.upload = function(file) {
             let out = new FormData();
             out.append('file', file, file.name);
 
@@ -118,16 +118,30 @@
                 cache: false,
                 processData: false,
                 data: out,
-                success: function (img) {
+                success: function(img) {
                     $('#description').summernote('insertImage', img);
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                error: function(jqXHR, textStatus, errorThrown) {
                     console.error(textStatus + " " + errorThrown);
                 }
             });
         };
 
-        $.delete = function (file_link) {
+        var table = $("#mytable").DataTable({
+
+            ajax: "list.json",
+            columns: [{
+                    "data": "name"
+                },
+                {
+                    "data": "location"
+                },
+                {
+                    "data":"user_name"
+                }
+            ]
+        });
+        $.delete = function(file_link) {
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -137,16 +151,18 @@
             $.ajax({
                 method: 'POST',
                 url: '/admin/ajax_delete_img',
-                data: {file_link:file_link},
-                success: function (img) {
-                    console.log("delete:",img);
+                data: {
+                    file_link: file_link
                 },
-                error: function (jqXHR, textStatus, errorThrown) {
+                success: function(img) {
+                    console.log("delete:", img);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
                     console.error(textStatus + " " + errorThrown);
                 }
             });
         }
-   });
+    });
 </script>
 
 
